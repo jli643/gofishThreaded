@@ -2,7 +2,7 @@
 
 void Hand::showHand(){
 	for(int i = 0; i < myHand.size(); i++){
-		myHand.at(i).showCard();
+		std::cout << myHand.at(i).showCard() << std::endl;
 	}
 }
 
@@ -35,4 +35,9 @@ std::string Hand::showCardValue(int i){
 
 int Hand::getSize(){
 	return myHand.size();
+}
+
+std::string Hand::showCard(int i){
+    std::string blah = myHand.at(i).showCard();
+    return blah;
 }

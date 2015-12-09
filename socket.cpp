@@ -74,7 +74,7 @@ int Socket::Write(ByteArray const & buffer)
     return returnValue;
 }
 
-static const int MAX_BUFFER_SIZE = 256;
+static const int MAX_BUFFER_SIZE = 1000;
 int Socket::Read(ByteArray & buffer)
 {
     char raw[MAX_BUFFER_SIZE];

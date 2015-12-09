@@ -3,6 +3,7 @@
 #include <time.h>
 #include <string>
 #include <vector>
+#include <sstream>
 #include <pthread.h>
 #include "Blockable.h"
 #include "socket.h"
@@ -15,7 +16,7 @@
 using namespace Communication;
 
 void initialDraw(Hand &player1, Hand &player2, Deck &gameDeck);
-std::string askPlayer(Hand &player);
+bool askPlayer(Hand &player, std::string input);
 bool checkPlayer(std::string request, Hand &player);
 bool verify(std::string input, Hand &player);
 bool checkForDuplicates(Hand &player);
@@ -102,34 +103,61 @@ int main(void)
             int player2Score = 0;
             
             initialDraw(player1, player2, gameDeck);
+            //ByteArray p1 = 
             
             while (gameRunning) {
 		//Player 1's turn
 		while (player1Turn) {
-			std::cout << "Player 1's Turn\n************************************" << std::endl;
-
-			//Show Hand
-                        //std::string blah = "Hello!\n";
-                        //ByteArray player1handtemp(blah);
-                        //theSocket.Write(player1temp);
-			player1.showHand();
+			std::string display = "Your Turn\n************************************\n";
+                        
+                        for(int i = 0; i < player1.getSize(); i++){
+                            display += player1.showCard(i);
+                        }
 
 			//Show Score
-			std::cout << "Your score is: " << player1Score << std::endl;
-
+                        std::ostringstream os;
+                        os << "Your score is: " << player1Score << "\n";
+                        display += os.str();
+                        
 			//Check for duplicates until there are no more
 			bool duplicate = checkForDuplicates(player1);		
-			while(duplicate){
-				std::cout << "You got rid of a duplicate! Your score is now " << ++player1Score << std::endl << "**************************\n";
-				player1.showHand();
-				duplicate = checkForDuplicates(player1);
+			while(duplicate)
+                        {
+                            display += "**************************\nYou got rid of a duplicate!\n";
+                                
+                                for(int i = 0; i < player1.getSize(); i++)
+                                {
+                                    display += player1.showCard(i);
+                                }
+                                
+                                std::ostringstream osx;
+                                osx << "Your score is now "  << ++player1Score << std::endl;
+                                display += osx.str();
+                                
+                                duplicate = checkForDuplicates(player1);
 			}
-
-			//Make a request string
-			std::string request;
+			
+			//Server Output
+			std::cout << display;
+			
+                        //Send output to client
+			ByteArray p1 = display;
+                        newSocket.Write(p1);
 
 			//Player 1 makes a request
-			request = askPlayer(player1);
+			//***need to get input string here
+                        ByteArray r1;
+                        newSocket.Read(r1);
+                        std::string request = r1.ToString();
+                        std::cout<<request;//test
+                        
+                        
+                        if(!askPlayer(player1, request)) 
+                        {
+                            //send message back here
+                            std::cout << "Invalid entry! Please name a card that you have in your hand." << std::endl;
+                            
+                        }
 
 			//If player 2 has the same card, remove the card from each hand
 			if (checkPlayer(request, player2)) {
@@ -248,26 +276,12 @@ bool checkForDuplicates(Hand &player)
 	return false;
 }
 
-std::string askPlayer(Hand &player)
+bool askPlayer(Hand &player, std::string input)
 {
-	
-	std::string input;
 	bool inputValid = false;
+        inputValid = verify(input, player);	
 	
-	while(!inputValid)
-        {
-		std::cout << "You ask your oppponent for a card value (Ex. Ace, 3, King):" << std::endl;
-		std::cout << "Do you have a... ";
-		std::cin >> input;
-		inputValid = verify(input, player);	
-		if (!inputValid) 
-                {
-			std::cout << "Invalid entry! Please name a card that you have in your hand." << std::endl;
-		}
-
-	}
-	
-	return input;
+	return inputValid;
 }
 
 bool checkPlayer(std::string request, Hand &player)

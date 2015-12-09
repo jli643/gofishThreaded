@@ -6,8 +6,10 @@ Card::Card(std::string myValue, std::string mySuit){
 
 Card::Card() {}
 
-void Card::showCard(){
-	std::cout << value << " of " << suit << std::endl;
+std::string Card::showCard(){
+    std::string blah =  value + " of " + suit + "\n";
+    return blah;
+	
 }
 
 std::string Card::getValue(){

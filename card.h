@@ -14,7 +14,7 @@ class Card{
 		Card(std::string value, std::string mySuit);
 		Card();
 		std::string getValue();
-		void showCard();
+		std::string showCard();
 };
 
 #endif

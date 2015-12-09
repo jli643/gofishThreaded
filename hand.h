@@ -15,6 +15,7 @@ class Hand{
 		std::string showCardValue(int i);
 		int getSize();
 		Hand() {}
+		std::string showCard(int i);
 };
 
 #endif
