@@ -38,7 +38,7 @@ int main(void)
         }
 
         
-        std::cout << "Pick a card in opponents hand. Card must be in your hand already.\n";
+        
 
       FlexWait waiter(2,&cinWatcher,&socket);
       Blockable * result = waiter.Wait();
@@ -52,8 +52,7 @@ int main(void)
           else
           {
               input = dummy.ToString();
-              std::cout << "Received: " << input << " from master" << std::endl;
-              
+              std::cout << "Received: " << input  << std::endl;
               std::cin >> input;
               ByteArray ba(input);
                 int written = socket.Write(ba);

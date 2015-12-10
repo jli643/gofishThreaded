@@ -16,6 +16,7 @@ bool askPlayer(Hand &player, std::string input);
 bool checkPlayer(std::string request, Hand &player);
 bool verify(std::string input, Hand &player);
 bool checkForDuplicates(Hand &player);
+void checkScore(int player1Score,int player2Score ,bool gameRunning,Socket &theSocket,Socket &theSocket2);
 
 using namespace Communication;
 
@@ -57,7 +58,7 @@ public:
 
                     //Show Score
                     std::ostringstream os;
-                    os << "Your score is: " << player1Score << "\n";
+                    os << "Your score is: " << player1Score << "\n"<<"Pick a card in opponents hand. Card must be in your hand already.\n"; ;
                     display += os.str();
                     
                     //Check for duplicates until there are no more
@@ -72,7 +73,7 @@ public:
                             }
                             
                             std::ostringstream osx;
-                            osx << "Your score is now "  << ++player1Score << std::endl;
+                            osx << "Your score is now "  << ++player1Score << std::endl<<"Pick a card in opponents hand. Card must be in your hand already.\n";
                             display += osx.str();
                             
                             duplicate = checkForDuplicates(player1);
@@ -127,6 +128,7 @@ public:
                                 std::string toSend = osi.str();
                                 ByteArray ba=toSend;
                                 theSocket.Write(ba);
+                                checkScore(player1Score,player2Score,gameRunning,theSocket,theSocket2);
                                     
                         }
                         //If they do not, the player picks up a card and their turn ends
@@ -146,6 +148,8 @@ public:
                                     
                                 player1Turn = false;
                                 player2Turn = true;
+                                
+                                checkScore(player1Score,player2Score,gameRunning,theSocket,theSocket2);
                                     
                         }
                         //sleep(100);
@@ -164,7 +168,7 @@ public:
 
                     //Show Score
                     std::ostringstream os;
-                    os << "Your score is: " << player2Score << "\n";
+                    os << "Your score is: " << player2Score << "\n"<<"Pick a card in opponents hand. Card must be in your hand already.\n";;
                     display += os.str();
                     
                     //Check for duplicates until there are no more
@@ -179,7 +183,7 @@ public:
                             }
                             
                             std::ostringstream osx;
-                            osx << "Your score is now "  << ++player2Score << std::endl;
+                            osx << "Your score is now "  << ++player2Score << std::endl << "Pick a card in opponents hand. Card must be in your hand already.\n";;
                             display += osx.str();
                             
                             duplicate = checkForDuplicates(player2);
@@ -234,6 +238,7 @@ public:
                                 std::string toSend = osi.str();
                                 ByteArray ba=toSend;
                                 theSocket2.Write(ba);
+                                checkScore(player1Score,player2Score,gameRunning,theSocket,theSocket2);
                                     
                         }
                         //If they do not, the player picks up a card and their turn ends
@@ -252,6 +257,8 @@ public:
                                 player1Turn = true;
                                 player2Turn = false;
                                 
+                                checkScore(player1Score,player2Score,gameRunning,theSocket,theSocket2);
+                                
                                 
                                     
                         }
@@ -260,19 +267,7 @@ public:
                 }
             }
             
-            if (player1Score >= 5 || player2Score >= 5) 
-            {
-                std::ostringstream ost;
-                gameRunning = false;
-                ost << "The game is over! Final scores are:\n" << "Player 1: " << player1Score << "Player 2: " << player2Score << std::endl;
-                std::cout<<ost.str();
-                std::string toSend = ost.str();
-                ByteArray ba = toSend;
-                theSocket.Write(ba);
-                sleep(2);
-                theSocket2.Write(ba);
-                std::cin.ignore();
-            }
+            
             
         }
             std::cout << "Thread is gracefully ending" << std::endl;
@@ -429,4 +424,20 @@ bool verify(std::string input, Hand &player)
 	}
 	
 	return false;
+}
+void checkScore(int player1Score, int player2Score, bool gameRunning ,Socket &theSocket,Socket &theSocket2 )
+{
+    if (player1Score >= 5 || player2Score >= 5) 
+            {
+                std::ostringstream ost;
+                gameRunning = false;
+                ost << "The game is over! Final scores are:\n" << "Player 1: " << player1Score <<std::endl<< "Player 2: " << player2Score << std::endl;
+                std::cout<<ost.str();
+                std::string toSend = ost.str();
+                ByteArray ba = toSend;
+                theSocket.Write(ba);
+                sleep(2);
+                theSocket2.Write(ba);
+                std::cin.ignore();
+            }
 }
