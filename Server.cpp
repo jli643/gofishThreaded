@@ -10,6 +10,7 @@
 #include "hand.h"
 #include "deck.h"
 #include "card.h"
+using namespace Communication;
 
 void initialDraw(Hand &player1, Hand &player2, Deck &gameDeck);
 bool askPlayer(Hand &player, std::string input);
@@ -18,7 +19,7 @@ bool verify(std::string input, Hand &player);
 bool checkForDuplicates(Hand &player);
 void checkScore(int player1Score,int player2Score ,bool gameRunning,Socket &theSocket,Socket &theSocket2);
 
-using namespace Communication;
+
 
 class CommThread : public Thread
 {
@@ -288,7 +289,7 @@ int main(void)
     SocketServer theServer(2000);
     std::vector<CommThread *> threads;
     int count =0;
-    Socket newSocket = NULL;
+    Socket newSocket(9000);
 
     for(;;)
     {
